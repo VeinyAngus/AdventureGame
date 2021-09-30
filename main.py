@@ -1,6 +1,6 @@
 import pygame
 import random
-from world_gen import World
+from world_gen import World, House
 from player import Player
 
 
@@ -8,17 +8,26 @@ pygame.init()
 screen = pygame.display.set_mode((800, 800))
 clock = pygame.time.Clock()
 
-grass = pygame.image.load('img/grass_tile.png').convert_alpha()
-water = pygame.image.load('img/water_tile.png').convert_alpha()
+grass_raw = pygame.image.load('img/grass3.png').convert_alpha()
+grass = pygame.transform.scale(grass_raw, (100, 100))
+water_raw = pygame.image.load('img/water_tile.png').convert_alpha()
+water = pygame.transform.scale(water_raw, (100, 100))
 tree = pygame.image.load('img/tree.png').convert_alpha()
-apple_tree = pygame.image.load('img/apple_tree.png').convert_alpha()
-dead_tree = pygame.image.load('img/dead_tree.png').convert_alpha()
+apple_tree_raw = pygame.image.load('img/apple_tree.png').convert_alpha()
+apple_tree = pygame.transform.scale(apple_tree_raw, (100, 100))
 wood = pygame.image.load('img/wood.png').convert_alpha()
-apple_bare = pygame.image.load('img/apple_bare.png').convert_alpha()
-wood_house = pygame.image.load('img/wood_house.png').convert_alpha()
+apple_bare_raw = pygame.image.load('img/apple_bare.png').convert_alpha()
+apple_bare = pygame.transform.scale(apple_bare_raw, (100, 100))
+house_raw = pygame.image.load('img/wood_house.png').convert_alpha()
+wood_house = pygame.transform.scale(house_raw, (100, 100))
 apple = pygame.image.load('img/apple.png').convert_alpha()
+stump_raw = pygame.image.load('img/stump.png').convert_alpha()
+stump = pygame.transform.scale(stump_raw, (100, 100))
 wood_chop = pygame.mixer.Sound('audio/wood_chop.ogg')
 apple_pick = pygame.mixer.Sound('audio/apple_pick.ogg')
+door_open = pygame.mixer.Sound('audio/door_open.ogg')
+door_close = pygame.mixer.Sound('audio/door_close.ogg')
+house_build = pygame.mixer.Sound('audio/house_build.ogg')
 pygame.mixer.music.load('audio/theme.mp3')
 pygame.mixer.music.set_volume(0.3)
 pygame.mixer.music.play(-1)
@@ -35,6 +44,7 @@ map_x = 0
 map_y = 0
 world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
 levels[(map_x, map_y)] = world.tiles
+house = House()
 while running:
     clock.tick(60)
     for event in pygame.event.get():
@@ -42,45 +52,84 @@ while running:
             running = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_d:
-                player.x += 100
-                if player.x > 700:
-                    player.x = 0
-                    map_x += 1
-                    if (map_x, map_y) not in levels.keys():
-                        world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
-                        levels[(map_x, map_y)] = world.tiles
+                if not player.in_house:
+                    player.x += 100
+                    if player.x > 700:
+                        player.x = 0
+                        map_x += 1
+                        if (map_x, map_y) not in levels.keys():
+                            world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
+                            levels[(map_x, map_y)] = world.tiles
+                else:
+                    if player.x + 100 > 700:
+                        pass
+                    else:
+                        player.x += 100
             if event.key == pygame.K_a:
-                player.x -= 100
-                if player.x < 0:
-                    player.x = 700
-                    map_x -= 1
-                    if (map_x, map_y) not in levels.keys():
-                        world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
-                        levels[(map_x, map_y)] = world.tiles
+                if not player.in_house:
+                    player.x -= 100
+                    if player.x < 0:
+                        player.x = 700
+                        map_x -= 1
+                        if (map_x, map_y) not in levels.keys():
+                            world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
+                            levels[(map_x, map_y)] = world.tiles
+                else:
+                    if player.x - 100 < 0:
+                        pass
+                    else:
+                        player.x -= 100
             if event.key == pygame.K_w:
-                player.y -= 100
-                if player.y < 0:
-                    player.y = 700
-                    map_y -= 1
-                    if (map_x, map_y) not in levels.keys():
-                        world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
-                        levels[(map_x, map_y)] = world.tiles
+                if not player.in_house:
+                    player.y -= 100
+                    if player.y < 0:
+                        player.y = 700
+                        map_y -= 1
+                        if (map_x, map_y) not in levels.keys():
+                            world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
+                            levels[(map_x, map_y)] = world.tiles
+                else:
+                    if player.y - 100 < 0:
+                        pass
+                    else:
+                        player.y -= 100
             if event.key == pygame.K_s:
-                player.y += 100
-                if player.y > 700:
-                    player.y = 0
-                    map_y += 1
-                    if (map_x, map_y) not in levels.keys():
-                        world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
-                        levels[(map_x, map_y)] = world.tiles
+                if not player.in_house:
+                    player.y += 100
+                    if player.y > 700:
+                        player.y = 0
+                        map_y += 1
+                        if (map_x, map_y) not in levels.keys():
+                            world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
+                            levels[(map_x, map_y)] = world.tiles
+                else:
+                    if player.y + 100 > 700:
+                        pass
+                    else:
+                        player.y += 100
             if event.key == pygame.K_SPACE:
-                for tile in levels[(map_x, map_y)][:]:
-                    if tile[2] == 'apple_tree' or tile[2] == 'apple_bare':
-                        if player.rect.colliderect(tile[1]):
-                            player.wood += 1
-                            tile[0] = pygame.transform.scale(grass, (100, 100))
-                            tile[2] = 'grass'
-                            wood_chop.play()
+                if not player.in_house:
+                    for tile in levels[(map_x, map_y)][:]:
+                        if tile[2] == 'apple_tree' or tile[2] == 'apple_bare':
+                            if player.rect.colliderect(tile[1]):
+                                player.wood += 1
+                                tile[0] = pygame.transform.scale(stump, (100, 100))
+                                tile[2] = 'stump'
+                                wood_chop.play()
+                        if tile[2] == 'house':
+                            if player.rect.colliderect(tile[1]):
+                                player.in_house = True
+                                door_open.play()
+                                player.last_known = (player.x, player.y)
+                                player.x, player.y = 300, 700
+                if player.in_house:
+                    for tile in house.tiles:
+                        if tile[2] == 'door':
+                            if player.rect.colliderect(tile[1]):
+                                player.in_house = False
+                                door_close.play()
+                                player.x, player.y = player.last_known[0], player.last_known[1]
+                                player.last_known = None
             if event.key == pygame.K_h:
                 for tile in levels[(map_x, map_y)][:]:
                     if tile[2] == 'apple_tree':
@@ -97,8 +146,13 @@ while running:
                                 player.wood -= 25
                                 tile[0] = pygame.transform.scale(wood_house, (100, 100))
                                 tile[2] = 'house'
-    for tile in levels[(map_x, map_y)]:
-        screen.blit(tile[0], tile[1])
+                                house_build.play()
+    if not player.in_house:
+        for tile in levels[(map_x, map_y)]:
+            screen.blit(tile[0], tile[1])
+    else:
+        for tile in house.tiles:
+            screen.blit(tile[0], tile[1])
     player.draw(screen)
     screen.blit(wood_img, (0, 0))
     screen.blit(apple_img, (120, 0))
