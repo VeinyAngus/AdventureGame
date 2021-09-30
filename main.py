@@ -73,10 +73,22 @@ while running:
                 for tile in levels[(map_x, map_y)][:]:
                     if tile[2] == 'tree':
                         if player.rect.colliderect(tile[1]):
+                            player.wood += 1
                             tile[0] = pygame.transform.scale(grass, (100, 100))
                             tile[2] = 'grass'
                             wood_chop.play()
+            if event.key == pygame.K_m:
+                for tile in levels[(map_x, map_y)][:]:
+                    if tile[2] == 'grass':
+                        if player.rect.colliderect(tile[1]):
+                            if player.wood >= 25:
+                                player.wood -= 25
+                                tile[0] = pygame.transform.scale(wood_house, (100, 100))
+                                tile[2] = 'house'
     for tile in levels[(map_x, map_y)]:
         screen.blit(tile[0], tile[1])
     player.draw(screen)
+    screen.blit(wood_img, (0, 0))
+    wood_label = main_font.render(f'{player.wood}', True, (255, 255, 255))
+    screen.blit(wood_label, (65, 0))
     pygame.display.update()
