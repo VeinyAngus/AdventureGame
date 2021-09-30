@@ -16,13 +16,14 @@ class World:
         house = pygame.transform.scale(house_raw, (100, 100))
         apple_bare_raw = pygame.image.load('img/apple_bare.png').convert_alpha()
         apple_bare = pygame.transform.scale(apple_bare_raw, (100, 100))
-        stump_raw = pygame.image.load('img/stump.png').convert_alpha()
-        stump = pygame.transform.scale(stump_raw, (100, 100))
+        fall_tree_raw = pygame.image.load('img/fall_tree.png').convert_alpha()
+        fall_tree = pygame.transform.scale(fall_tree_raw, (100, 100))
+        flower_tree_raw = pygame.image.load('img/flower_tree.png').convert_alpha()
         row_count = 0
         for row in data:
             col_count = 0
             for tile in row:
-                if tile == 1 or tile == 3:
+                if tile == 1 or tile == 3 or tile == 4:
                     img = pygame.transform.scale(grass, (self.tile_size, self.tile_size))
                     img_rect = img.get_rect()
                     img_rect.x = col_count * self.tile_size
@@ -30,12 +31,28 @@ class World:
                     tile = [img, img_rect, 'grass']
                     self.tiles.append(tile)
                 if tile == 2:
-                    img = pygame.transform.scale(apple_tree, (self.tile_size, self.tile_size))
-                    img_rect = img.get_rect()
-                    img_rect.x = col_count * self.tile_size
-                    img_rect.y = row_count * self.tile_size
-                    tile = [img, img_rect, 'apple_tree']
-                    self.tiles.append(tile)
+                    tree_type = random.choice(['apple_tree', 'fall_tree', 'flower_tree'])
+                    if tree_type == 'apple_tree':
+                        img = pygame.transform.scale(apple_tree, (self.tile_size, self.tile_size))
+                        img_rect = img.get_rect()
+                        img_rect.x = col_count * self.tile_size
+                        img_rect.y = row_count * self.tile_size
+                        tile = [img, img_rect, 'apple_tree']
+                        self.tiles.append(tile)
+                    if tree_type == 'fall_tree':
+                        img = pygame.transform.scale(fall_tree, (self.tile_size, self.tile_size))
+                        img_rect = img.get_rect()
+                        img_rect.x = col_count * self.tile_size
+                        img_rect.y = row_count * self.tile_size
+                        tile = [img, img_rect, 'fall_tree']
+                        self.tiles.append(tile)
+                    if tree_type == 'flower_tree':
+                        img = pygame.transform.scale(flower_tree_raw, (self.tile_size, self.tile_size))
+                        img_rect = img.get_rect()
+                        img_rect.x = col_count * self.tile_size
+                        img_rect.y = row_count * self.tile_size
+                        tile = [img, img_rect, 'flower_tree']
+                        self.tiles.append(tile)
                 if tile == 0:
                     img = pygame.transform.scale(water, (self.tile_size, self.tile_size))
                     img_rect = img.get_rect()
@@ -43,7 +60,7 @@ class World:
                     img_rect.y = row_count * self.tile_size
                     tile = [img, img_rect, 'water']
                     self.tiles.append(tile)
-                if tile == 4:
+                if tile == 6:
                     img = pygame.transform.scale(house, (100, 100))
                     img_rect = img.get_rect()
                     img_rect.x = col_count * self.tile_size
@@ -69,7 +86,7 @@ class House:
     def __init__(self):
         self.house_map = [[0, 0, 0, 0, 0, 0, 0, 0],
                           [0, 0, 0, 0, 0, 0, 0, 0],
-                          [0, 0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0, 2],
                           [0, 0, 0, 0, 0, 0, 0, 0],
                           [0, 0, 0, 0, 0, 0, 0, 0],
                           [0, 0, 0, 0, 0, 0, 0, 0],
@@ -81,6 +98,7 @@ class House:
         floor = pygame.transform.scale(floor_raw, (100, 100))
         door_raw = pygame.image.load('img/door_tile.png').convert_alpha()
         door = pygame.transform.scale(door_raw, (100, 100))
+        chest_raw = pygame.image.load('img/chest.png').convert_alpha()
         row_count = 0
         for row in self.house_map:
             col_count = 0
@@ -98,6 +116,13 @@ class House:
                     img_rect.x = col_count * self.tile_size
                     img_rect.y = row_count * self.tile_size
                     tile = [img, img_rect, 'door']
+                    self.tiles.append(tile)
+                if tile == 2:
+                    img = pygame.transform.scale(chest_raw, (self.tile_size, self.tile_size))
+                    img_rect = img.get_rect()
+                    img_rect.x = col_count * self.tile_size
+                    img_rect.y = row_count * self.tile_size
+                    tile = [img, img_rect, 'chest']
                     self.tiles.append(tile)
                 col_count += 1
             row_count += 1

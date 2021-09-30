@@ -22,7 +22,13 @@ house_raw = pygame.image.load('img/wood_house.png').convert_alpha()
 wood_house = pygame.transform.scale(house_raw, (100, 100))
 apple = pygame.image.load('img/apple.png').convert_alpha()
 stump_raw = pygame.image.load('img/stump.png').convert_alpha()
+fall_stump_raw = pygame.image.load('img/fall_tree_stump.png').convert_alpha()
+fall_stump = pygame.transform.scale(fall_stump_raw, (100, 100))
+flower_tree_raw = pygame.image.load('img/flower_tree.png').convert_alpha()
+flower_tree = pygame.transform.scale(flower_tree_raw, (100, 100))
 stump = pygame.transform.scale(stump_raw, (100, 100))
+flower_tree_stump_raw = pygame.image.load('img/flower_tree_stump.png').convert_alpha()
+flower_tree_stump = pygame.transform.scale(flower_tree_stump_raw, (100, 100))
 wood_chop = pygame.mixer.Sound('audio/wood_chop.ogg')
 apple_pick = pygame.mixer.Sound('audio/apple_pick.ogg')
 door_open = pygame.mixer.Sound('audio/door_open.ogg')
@@ -42,7 +48,7 @@ levels = dict()
 running = True
 map_x = 0
 map_y = 0
-world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
+world = World([[random.randint(0, 4) for _ in range(8)] for _ in range(8)])
 levels[(map_x, map_y)] = world.tiles
 house = House()
 while running:
@@ -58,7 +64,7 @@ while running:
                         player.x = 0
                         map_x += 1
                         if (map_x, map_y) not in levels.keys():
-                            world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
+                            world = World([[random.randint(0, 4) for _ in range(8)] for _ in range(8)])
                             levels[(map_x, map_y)] = world.tiles
                 else:
                     if player.x + 100 > 700:
@@ -72,7 +78,7 @@ while running:
                         player.x = 700
                         map_x -= 1
                         if (map_x, map_y) not in levels.keys():
-                            world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
+                            world = World([[random.randint(0, 4) for _ in range(8)] for _ in range(8)])
                             levels[(map_x, map_y)] = world.tiles
                 else:
                     if player.x - 100 < 0:
@@ -86,7 +92,7 @@ while running:
                         player.y = 700
                         map_y -= 1
                         if (map_x, map_y) not in levels.keys():
-                            world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
+                            world = World([[random.randint(0, 4) for _ in range(8)] for _ in range(8)])
                             levels[(map_x, map_y)] = world.tiles
                 else:
                     if player.y - 100 < 0:
@@ -100,7 +106,7 @@ while running:
                         player.y = 0
                         map_y += 1
                         if (map_x, map_y) not in levels.keys():
-                            world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
+                            world = World([[random.randint(0, 4) for _ in range(8)] for _ in range(8)])
                             levels[(map_x, map_y)] = world.tiles
                 else:
                     if player.y + 100 > 700:
@@ -115,6 +121,18 @@ while running:
                                 player.wood += 1
                                 tile[0] = pygame.transform.scale(stump, (100, 100))
                                 tile[2] = 'stump'
+                                wood_chop.play()
+                        if tile[2] == 'fall_tree':
+                            if player.rect.colliderect(tile[1]):
+                                player.wood += 1
+                                tile[0] = pygame.transform.scale(fall_stump, (100, 100))
+                                tile[2] = 'fall_stump'
+                                wood_chop.play()
+                        if tile[2] == 'flower_tree':
+                            if player.rect.colliderect(tile[1]):
+                                player.wood += 1
+                                tile[0] = pygame.transform.scale(flower_tree_stump, (100, 100))
+                                tile[2] = 'flower_tree_stump'
                                 wood_chop.play()
                         if tile[2] == 'house':
                             if player.rect.colliderect(tile[1]):
