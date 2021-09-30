@@ -1,9 +1,7 @@
 import pygame
 import random
-import json
 from world_gen import World
 from player import Player
-from enemies import Bear
 
 
 pygame.init()
@@ -31,24 +29,47 @@ levels = dict()
 running = True
 map_x = 0
 map_y = 0
-levels[f'({map_x}, {map_y})'] = [[random.randint(0, 3) for _ in range(8)] for _ in range(8)]
-world = World(levels[f'({map_x}, {map_y})'])
+world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
+levels[(map_x, map_y)] = world.tiles
 while running:
     clock.tick(60)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-            with open('game_state.json', 'w') as f:
-                json.dump(levels, f, indent=6)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_d:
                 player.x += 100
                 if player.x > 700:
                     player.x = 0
                     map_x += 1
-                    levels[f'({map_x}, {map_y})'] = [[random.randint(0, 3) for _ in range(8)] for _ in range(8)]
-                    world = World(levels[f'({map_x}, {map_y})'])
-    for tile in world.tiles:
+                    if (map_x, map_y) not in levels.keys():
+                        world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
+                        levels[(map_x, map_y)] = world.tiles
+            if event.key == pygame.K_a:
+                player.x -= 100
+                if player.x < 0:
+                    player.x = 700
+                    map_x -= 1
+                    if (map_x, map_y) not in levels.keys():
+                        world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
+                        levels[(map_x, map_y)] = world.tiles
+            if event.key == pygame.K_w:
+                player.y -= 100
+                if player.y < 0:
+                    player.y = 700
+                    map_y -= 1
+                    if (map_x, map_y) not in levels.keys():
+                        world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
+                        levels[(map_x, map_y)] = world.tiles
+            if event.key == pygame.K_s:
+                player.y += 100
+                if player.y > 700:
+                    player.y = 0
+                    map_y += 1
+                    if (map_x, map_y) not in levels.keys():
+                        world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
+                        levels[(map_x, map_y)] = world.tiles
+    for tile in levels[(map_x, map_y)]:
         screen.blit(tile[0], tile[1])
     player.draw(screen)
     pygame.display.update()
