@@ -14,12 +14,16 @@ tree = pygame.image.load('img/tree.png').convert_alpha()
 apple_tree = pygame.image.load('img/apple_tree.png').convert_alpha()
 dead_tree = pygame.image.load('img/dead_tree.png').convert_alpha()
 wood = pygame.image.load('img/wood.png').convert_alpha()
+apple_bare = pygame.image.load('img/apple_bare.png').convert_alpha()
 wood_house = pygame.image.load('img/wood_house.png').convert_alpha()
+apple = pygame.image.load('img/apple.png').convert_alpha()
 wood_chop = pygame.mixer.Sound('audio/wood_chop.ogg')
+apple_pick = pygame.mixer.Sound('audio/apple_pick.ogg')
 pygame.mixer.music.load('audio/theme.mp3')
 pygame.mixer.music.set_volume(0.3)
 pygame.mixer.music.play(-1)
 wood_img = pygame.transform.scale(wood, (50, 50))
+apple_img = pygame.transform.scale(apple, (40, 40))
 main_font = pygame.font.SysFont('arial', 40)
 
 player = Player()
@@ -71,12 +75,20 @@ while running:
                         levels[(map_x, map_y)] = world.tiles
             if event.key == pygame.K_SPACE:
                 for tile in levels[(map_x, map_y)][:]:
-                    if tile[2] == 'tree':
+                    if tile[2] == 'apple_tree' or tile[2] == 'apple_bare':
                         if player.rect.colliderect(tile[1]):
                             player.wood += 1
                             tile[0] = pygame.transform.scale(grass, (100, 100))
                             tile[2] = 'grass'
                             wood_chop.play()
+            if event.key == pygame.K_h:
+                for tile in levels[(map_x, map_y)][:]:
+                    if tile[2] == 'apple_tree':
+                        if player.rect.colliderect(tile[1]):
+                            player.food += 1
+                            tile[0] = pygame.transform.scale(apple_bare, (100, 100))
+                            tile[2] = 'apple_bare'
+                            apple_pick.play()
             if event.key == pygame.K_m:
                 for tile in levels[(map_x, map_y)][:]:
                     if tile[2] == 'grass':
@@ -89,6 +101,9 @@ while running:
         screen.blit(tile[0], tile[1])
     player.draw(screen)
     screen.blit(wood_img, (0, 0))
+    screen.blit(apple_img, (120, 0))
     wood_label = main_font.render(f'{player.wood}', True, (255, 255, 255))
+    food_label = main_font.render(f'{player.food}', True, (255, 255, 255))
     screen.blit(wood_label, (65, 0))
+    screen.blit(food_label, (175, 0))
     pygame.display.update()

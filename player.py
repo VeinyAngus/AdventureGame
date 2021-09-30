@@ -9,6 +9,7 @@ class Player:
         self.y = 100
         self.rect = pygame.Rect(self.x, self.y, 100, 100)
         self.wood = 0
+        self.food = 0
 
     def update_rect(self):
         self.rect = pygame.Rect(self.x, self.y, 100, 100)

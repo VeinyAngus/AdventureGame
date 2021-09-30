@@ -12,6 +12,7 @@ class World:
         apple_tree = pygame.image.load('img/apple_tree.png').convert_alpha()
         dead_tree = pygame.image.load('img/dead_tree.png').convert_alpha()
         house = pygame.image.load('img/wood_house.png').convert_alpha()
+        apple_bare = pygame.image.load('img/apple_bare.png').convert_alpha()
         row_count = 0
         for row in data:
             col_count = 0
@@ -24,12 +25,11 @@ class World:
                     tile = [img, img_rect, 'grass']
                     self.tiles.append(tile)
                 if tile == 2:
-                    img = pygame.transform.scale(random.choice([apple_tree, tree, dead_tree]),
-                                                 (self.tile_size, self.tile_size))
+                    img = pygame.transform.scale(apple_tree, (self.tile_size, self.tile_size))
                     img_rect = img.get_rect()
                     img_rect.x = col_count * self.tile_size
                     img_rect.y = row_count * self.tile_size
-                    tile = [img, img_rect, 'tree']
+                    tile = [img, img_rect, 'apple_tree']
                     self.tiles.append(tile)
                 if tile == 0:
                     img = pygame.transform.scale(water, (self.tile_size, self.tile_size))
@@ -44,6 +44,13 @@ class World:
                     img_rect.x = col_count * self.tile_size
                     img_rect.y = row_count * self.tile_size
                     tile = [img, img_rect, 'house']
+                    self.tiles.append(tile)
+                if tile == 5:
+                    img = pygame.transform.scale(apple_bare, (100, 100))
+                    img_rect = img.get_rect()
+                    img_rect.x = col_count * self.tile_size
+                    img_rect.y = row_count * self.tile_size
+                    tile = [img, img_rect, 'apple_bare']
                     self.tiles.append(tile)
                 col_count += 1
             row_count += 1
