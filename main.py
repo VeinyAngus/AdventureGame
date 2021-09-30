@@ -69,6 +69,13 @@ while running:
                     if (map_x, map_y) not in levels.keys():
                         world = World([[random.randint(0, 3) for _ in range(8)] for _ in range(8)])
                         levels[(map_x, map_y)] = world.tiles
+            if event.key == pygame.K_SPACE:
+                for tile in levels[(map_x, map_y)][:]:
+                    if tile[2] == 'tree':
+                        if player.rect.colliderect(tile[1]):
+                            tile[0] = pygame.transform.scale(grass, (100, 100))
+                            tile[2] = 'grass'
+                            wood_chop.play()
     for tile in levels[(map_x, map_y)]:
         screen.blit(tile[0], tile[1])
     player.draw(screen)
