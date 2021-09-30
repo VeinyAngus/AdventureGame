@@ -131,22 +131,24 @@ while running:
                                 player.x, player.y = player.last_known[0], player.last_known[1]
                                 player.last_known = None
             if event.key == pygame.K_h:
-                for tile in levels[(map_x, map_y)][:]:
-                    if tile[2] == 'apple_tree':
-                        if player.rect.colliderect(tile[1]):
-                            player.food += 1
-                            tile[0] = pygame.transform.scale(apple_bare, (100, 100))
-                            tile[2] = 'apple_bare'
-                            apple_pick.play()
+                if not player.in_house:
+                    for tile in levels[(map_x, map_y)][:]:
+                        if tile[2] == 'apple_tree':
+                            if player.rect.colliderect(tile[1]):
+                                player.food += 1
+                                tile[0] = pygame.transform.scale(apple_bare, (100, 100))
+                                tile[2] = 'apple_bare'
+                                apple_pick.play()
             if event.key == pygame.K_m:
-                for tile in levels[(map_x, map_y)][:]:
-                    if tile[2] == 'grass':
-                        if player.rect.colliderect(tile[1]):
-                            if player.wood >= 25:
-                                player.wood -= 25
-                                tile[0] = pygame.transform.scale(wood_house, (100, 100))
-                                tile[2] = 'house'
-                                house_build.play()
+                if not player.in_house:
+                    for tile in levels[(map_x, map_y)][:]:
+                        if tile[2] == 'grass':
+                            if player.rect.colliderect(tile[1]):
+                                if player.wood >= 25:
+                                    player.wood -= 25
+                                    tile[0] = pygame.transform.scale(wood_house, (100, 100))
+                                    tile[2] = 'house'
+                                    house_build.play()
     if not player.in_house:
         for tile in levels[(map_x, map_y)]:
             screen.blit(tile[0], tile[1])
